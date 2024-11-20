@@ -79,8 +79,8 @@ public class InputManager implements KeyListener, MouseListener{
     }
 
     private void notifyInput(ButtonAction action) {
-        if(action != ButtonAction.NO_ACTION)
-            engine.receiveInput(action);
+            if(action != ButtonAction.NO_ACTION)
+                engine.receiveInput(action);
     }
 
     @Override

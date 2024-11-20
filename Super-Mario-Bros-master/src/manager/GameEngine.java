@@ -153,7 +153,7 @@ public class GameEngine implements Runnable {
             }
         }
     }
-
+    //vẽ lại giao diện của trò chơi.
     private void render() {
         uiManager.repaint();
     }

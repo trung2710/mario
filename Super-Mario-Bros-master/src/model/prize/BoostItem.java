@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public abstract class BoostItem extends GameObject implements Prize{
-
+    // xem vật phẩm đã được xuất hoene hay chưa.
     private boolean revealed = false;
     private int point;
 

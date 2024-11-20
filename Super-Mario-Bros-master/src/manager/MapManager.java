@@ -56,6 +56,7 @@ public class MapManager {
         return map.getMario();
     }
 
+    //ham tao ra lua ban ra khi mario o dang lua.
     public void fire(GameEngine engine) {
         Fireball fireball = getMario().fire();
         if (fireball != null) {
@@ -112,7 +113,7 @@ public class MapManager {
         checkTopCollisions(engine);
         checkMarioHorizontalCollision(engine);
         checkEnemyCollisions();
-        checkPrizeCollision();
+        checkPrizeCollision(engine);
         checkPrizeContact(engine);
         checkFireballContact();
     }
@@ -334,7 +335,7 @@ public class MapManager {
         }
     }
 
-    private void checkPrizeCollision() {
+    private void checkPrizeCollision(GameEngine engine) {
         ArrayList<Prize> prizes = map.getRevealedPrizes();
         ArrayList<Brick> bricks = map.getAllBricks();
 
@@ -349,6 +350,10 @@ public class MapManager {
                 //đặt trạng thái rơi.
                 boost.setFalling(true);
 
+                //neu nam di qua gioi han ben trai thi doi chieu chuyen dong
+                if(((BoostItem) prize).getVelX()<0 && ((BoostItem) prize).getX()<=engine.getCameraLocation().getX()){
+                    ((BoostItem) prize).setVelX(-((BoostItem) prize).getVelX());
+                }
                 //xử lí va chạm boostIntem và gạch.
                 for (Brick brick : bricks) {
                     Rectangle brickBounds;
@@ -396,6 +401,7 @@ public class MapManager {
                     if (boost.getVelX() == 0)
                         boost.setVelX(2);
                 }
+
 
             }
         }
