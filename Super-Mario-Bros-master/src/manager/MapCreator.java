@@ -124,6 +124,7 @@ class MapCreator {
         }
 
         System.out.println("Map is created..");
+//        System.out.println(createdMap.getEndPoint().getY());
         return createdMap;
     }
     //random phần thưởng nhận được từ các gạch chứa phần thưởng.

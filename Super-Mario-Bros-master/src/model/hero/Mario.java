@@ -130,6 +130,10 @@ public class Mario extends GameObject{
         return toRight;
     }
 
+    public void setToRight(boolean a){
+        this.toRight=a;
+    }
+
     public void resetLocation() {
         setVelX(0);
         setVelY(0);

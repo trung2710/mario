@@ -39,6 +39,9 @@ public class Camera {
     public void moveCam(double xAmount, double yAmount){
         //camera sẽ lắc di chuyển qua lại trục Ox với biên độ 4 đơn vị
         //hướng di chuyển mỗi khung hình tùy thuộc vào camera chẵn hay lẽ
+        //Khung hình (frame) được đề cập trong đoạn mã Camera không phải là khung hình cụ thể của một đối tượng mà
+        // là khái niệm khung hình trong trò chơi. Đây là đơn vị thời gian trong vòng lặp game loop, nơi các cập nhật
+        // và render được thực hiện.
         if(shaking && frameNumber > 0){
             int direction = (frameNumber%2 == 0)? 1 : -1;
             x = x + 4 * direction;

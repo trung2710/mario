@@ -20,7 +20,7 @@ import java.util.ArrayList;
 // nhân vật chính (Mario).
 public class MapManager {
 
-    private Map map;
+    public  Map map;
 
     public MapManager() {}
 
@@ -34,6 +34,7 @@ public class MapManager {
 
     public void resetCurrentMap(GameEngine engine) {
         Mario mario = getMario();
+        mario.setToRight(true);
         mario.resetLocation();
         engine.resetCamera();
         // đây là câu lệnh mà khi mario chết 1 mạng thì reset lại toàn bộ map, khôi phục lại các con quái và các phần thưởng đã ăn.
@@ -130,7 +131,7 @@ public class MapManager {
         if (!mario.isJumping())
             mario.setFalling(true);
 
-        //khi mario nhảy lên mà vượt quá giới hạn cả khng hình ở trên thì set vận tốc bằng 0.
+        //khi mario nhảy lên mà vượt quá giới hạn cả khung hình ở trên thì set vận tốc bằng 0.
         // không cho mario khi nhảy lên thì vượt ra khỏi khng hình.
         if(mario.isJumping()){
             if(mario.getY()<=0){
@@ -267,6 +268,7 @@ public class MapManager {
         }
         //nếu mario chết thì đặt lại map và vị trí của mario
         if(marioDies) {
+            map.updateTime(100);
             resetCurrentMap(engine);
         }
     }
@@ -274,11 +276,33 @@ public class MapManager {
     private void checkEnemyCollisions() {
         ArrayList<Brick> bricks = map.getAllBricks();
         ArrayList<Enemy> enemies = map.getEnemies();
+        Mario mario=getMario();
 
-        for (Enemy enemy : enemies) {
+        for (int i=0;i<enemies.size();i++) {
+            Enemy enemy=enemies.get(i);
             // biến kiểm tra xem kẻ thù có ở đứng ở trên gạch hay không.
             boolean standsOnBrick = false;
 
+            //test trường hợp enemy bị thu hút bởi mario như kiểu di chuyển vào lại gần mario
+            // Khoảng cách giữa Mario và enemy
+            double distanceToMario = Math.abs(mario.getX() - enemy.getX());
+
+            // Kiểm tra xem có chướng ngại vật giữa Mario và kẻ thù không
+            boolean hasObstacleBetween = isObstacleBetweenMarioAndEnemy(mario, enemy, bricks);
+            // Kiểm tra Mario có đứng trên gạch không
+            boolean marioStandingOnBrick = isMarioStandingOnBrick(mario, bricks);
+
+
+            // Nếu khoảng cách nhỏ hơn hoặc bằng 300 và không có chướng ngại vật, kẻ thù sẽ bị thu hút và đổi hướng
+            // chỉ xét khi mario đứng ngang hàng với enemy
+            if (distanceToMario <= 500 && !hasObstacleBetween && !marioStandingOnBrick && mario.getY()==enemy.getY()) {
+                if (mario.getX() > enemy.getX() && enemy.getVelX() < 0) {
+                    enemy.setVelX(-enemy.getVelX());
+                } else if (mario.getX() < enemy.getX() && enemy.getVelX() > 0) {
+                    enemy.setVelX(-enemy.getVelX());
+                }
+
+            }
             for (Brick brick : bricks) {
                 //lấy vùng giới hạn bên trái kẻ thù
                 Rectangle enemyBounds = enemy.getLeftBounds();
@@ -332,7 +356,54 @@ public class MapManager {
             if (!standsOnBrick && enemy.getY() < map.getBottomBorder()){
                 enemy.setFalling(true);
             }
+            // Kiểm tra va chạm giữa các quái
+            //cho 2 con quái va chạm với nhau thì đẩy nhau
+//            for(int j=i+1;j<enemies.size();j++) {
+//                Enemy e2=enemies.get(j);
+//                if (e2!=enemy && enemy.getBounds().intersects(e2.getBounds())) {
+//                    // Đổi chiều di chuyển của cả hai con quái
+//                    enemy.setVelX(-enemy.getVelX());
+//                    e2.setVelX(-e2.getVelX());
+//                }
+//            }
+
+
         }
+    }
+    // Phương thức kiểm tra xem có chướng ngại vật nào giữa Mario và enemy hay không
+    private boolean isObstacleBetweenMarioAndEnemy(Mario mario, Enemy enemy, ArrayList<Brick> bricks) {
+        // Lấy tọa độ bắt đầu và kết thúc giữa Mario và enemy
+        int marioX = (int)mario.getX();
+        int enemyX = (int)enemy.getX();
+
+        // Đảm bảo rằng ta luôn kiểm tra từ trái sang phải
+        int left = Math.min(marioX, enemyX);
+        int right = Math.max(marioX, enemyX);
+
+        // Kiểm tra các gạch nằm giữa Mario và enemy
+        for (Brick brick : bricks) {
+            // Nếu gạch nằm trong phạm vi giữa Mario và enemy và nó cản trở đường đi
+            if (brick.getX() > left && brick.getX() < right) {
+                // Nếu gạch có chiều cao đủ để chắn giữa Mario và enemy (khoảng cách theo trục Y)
+                if (brick.getY() < Math.max(mario.getY(), enemy.getY())) {
+                    return true; // Có chướng ngại vật
+                }
+            }
+        }
+
+        return false; // Không có chướng ngại vật
+    }
+    //kiem tra xem mario co dung tren 1 vien gach nao khong.
+    private boolean isMarioStandingOnBrick(Mario mario, ArrayList<Brick> bricks) {
+        Rectangle marioBounds = mario.getBounds();
+        for (Brick brick : bricks) {
+            // Kiểm tra xem Mario có đứng trên gạch hay không
+            if (marioBounds.intersects(brick.getBounds())) {
+                // Nếu Mario đang trên gạch, trả về true
+                return true;
+            }
+        }
+        return false;
     }
 
     private void checkPrizeCollision(GameEngine engine) {

@@ -121,15 +121,17 @@ public class GameEngine implements Runnable {
     @Override
     //Phương thức run là một phần trong vòng đời của một luồng (thread).
     // Phương thức này điều khiển toàn bộ hoạt động của trò chơi, bao gồm cập nhật logic, vẽ hình ảnh và xử lý thời gian.
+    //fps=60:Vòng lặp game loop thực hiện 60 lần cập nhật và render trong mỗi giây.
     public void run() {
         long lastTime = System.nanoTime();
-        double amountOfTicks = 70.0;
+        double amountOfTicks = 60.0;
         double ns = 1000000000 / amountOfTicks;
         double delta = 0;
         long timer = System.currentTimeMillis();
 
         //game dang trong trang thai : RUNNING,
         //thread.isInterrupted==true khi :Người dùng đóng ứng dụng, và bạn sử dụng interrupt() để dừng các luồng nền.
+        //vòng lặp của game.
         while (isRunning && !thread.isInterrupted()) {
 
             long now = System.nanoTime();
@@ -166,12 +168,12 @@ public class GameEngine implements Runnable {
 
         if (isGameOver()) {
             setGameStatus(GameStatus.GAME_OVER);
-            try {
-                SavePointFile();
-            }
-            catch (Exception e){
-
-            }
+//            try {
+//                SavePointFile();
+//            }
+//            catch (Exception e){
+//
+//            }
 
         }
 

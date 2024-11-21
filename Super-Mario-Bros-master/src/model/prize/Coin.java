@@ -63,6 +63,7 @@ public class Coin extends GameObject implements Prize{
         if(revealed){
             g.drawImage(getStyle(), (int)getX(), (int)getY(), null);
         }
+
     }
 
     public int getRevealBoundary() {

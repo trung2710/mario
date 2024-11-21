@@ -112,7 +112,7 @@ public class Map {
     }
 
     private void drawBricks(Graphics2D g2) {
-        for(Brick brick : bricks){
+        for(Brick brick : new ArrayList<>(bricks)){
             if(brick != null)
                 brick.draw(g2);
         }
